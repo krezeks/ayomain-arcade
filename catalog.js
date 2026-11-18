@@ -1,0 +1,42 @@
+"use strict";
+/* ayomain arcade — katalog game open-source.
+   Nambah game = tambah 1 entri di sini + 1 folder di games/.
+   Semua game berlisensi open-source; atribusi lengkap di credits.html. */
+window.ARCADE_GAMES = [
+  { slug: "2048", name: "2048", icon: "🔢", cat: "Puzzle",
+    desc: "Geser dan gabungkan ubin angka sampai jadi 2048.",
+    license: "MIT", source: "github.com/attogram/2048-lite", author: "Gabriele Cirulli dkk." },
+  { slug: "pacman", name: "Pac-Man", icon: "👾", cat: "Arcade",
+    desc: "Makan semua titik di labirin, hindari para hantu.",
+    license: "GPL-3.0", source: "github.com/attogram/pacman-lite", author: "Lucio Panepinto" },
+  { slug: "hextris", name: "Hextris", icon: "⬡", cat: "Puzzle",
+    desc: "Tetris cepat yang berputar di atas heksagon.",
+    license: "GPL-3.0", source: "github.com/attogram/hextris-lite", author: "Tim Hextris" },
+  { slug: "chess", name: "Catur", icon: "♟️", cat: "Strategi",
+    desc: "Catur klasik melawan komputer, langsung di browser.",
+    license: "MIT", source: "github.com/attogram/chess", author: "Attogram" },
+  { slug: "eight-queens", name: "8 Ratu", icon: "👑", cat: "Puzzle",
+    desc: "Tempatkan 8 ratu di papan catur tanpa saling menyerang.",
+    license: "MIT", source: "github.com/attogram/EightQueens", author: "Attogram" },
+  { slug: "clumsy-bird", name: "Clumsy Bird", icon: "🐤", cat: "Arcade",
+    desc: "Burung kikuk: ketuk untuk terbang melewati pipa-pipa.",
+    license: "GPL-3.0", source: "github.com/ellisonleao/clumsy-bird", author: "Ellison Leão" },
+  { slug: "asteroids", name: "Asteroids", icon: "🚀", cat: "Arcade",
+    desc: "Tembak asteroid dan jaga pesawatmu tetap utuh.",
+    license: "MIT", source: "github.com/dmcinnes/HTML5-Asteroids", author: "Doug McInnes" },
+  { slug: "ns-shaft", name: "NS-Shaft", icon: "🪜", cat: "Arcade",
+    desc: "Turun lantai demi lantai — jangan sampai jatuh atau tertusuk.",
+    license: "Apache-2.0", source: "github.com/iPel/NS-SHAFT", author: "iPel" },
+  { slug: "tower", name: "Tower Blocks", icon: "🏗️", cat: "Santai",
+    desc: "Tumpuk balok setinggi mungkin, jangan sampai roboh.",
+    license: "MIT", source: "github.com/iamkun/tower_game", author: "iamkun" },
+  { slug: "missile", name: "Missile Game", icon: "🎯", cat: "Arcade",
+    desc: "Kendalikan rudal menembus gua dan rintangan.",
+    license: "AGPL-3.0", source: "github.com/bwhmather/missile-game", author: "Ben Mather" },
+  { slug: "twisty", name: "Twisty Polyhedra", icon: "🔷", cat: "Puzzle",
+    desc: "Putar polihedron 3D sampai semua sisinya rapi kembali.",
+    license: "GPL-3.0", source: "github.com/aditya-r-m/twisty-polyhedra", author: "Aditya R. M." },
+  { slug: "piano", name: "Piano Virtual", icon: "🎹", cat: "Musik",
+    desc: "Piano virtual di browser — mainkan lagu sesukamu.",
+    license: "MIT", source: "github.com/mrcoles/javascript-piano", author: "Peter Coles" }
+];

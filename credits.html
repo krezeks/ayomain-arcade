@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lisensi &amp; Kredit — ayomain arcade</title>
+<style>
+  :root{--bg:#101418;--panel:#181e24;--line:#2b343d;--ink:#eef3f6;--ink-soft:#9fb0bc;--accent:#ffb020}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+  main{max-width:860px;margin:0 auto;padding:26px 18px 50px}
+  a{color:var(--accent)}
+  h1{letter-spacing:-.02em}
+  p{color:var(--ink-soft);line-height:1.55}
+  table{width:100%;border-collapse:collapse;margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:.94rem;vertical-align:top}
+  th{color:var(--ink-soft);font-size:.78rem;text-transform:uppercase;letter-spacing:.07em}
+  tr:last-child td{border-bottom:none}
+  .btn{display:inline-flex;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 14px;border-radius:999px;font-weight:700;font-size:.9rem;text-decoration:none}
+</style>
+</head>
+<body>
+<main>
+  <a class="btn" href="./">← Semua Game</a>
+  <h1>Lisensi &amp; Kredit</h1>
+  <p>Semua game di ayomain arcade adalah karya <strong>open-source</strong> dari para pembuatnya masing-masing. Portal ini hanya merakitnya jadi satu tempat, mengikuti model katalog <a href="https://github.com/attogram/games" target="_blank" rel="noopener">Attogram Games</a> (MIT). Kode sumber lengkap setiap game ikut disertakan di foldernya, termasuk berkas lisensinya — sesuai syarat lisensi MIT, Apache-2.0, GPL-3.0, dan AGPL-3.0.</p>
+  <p>Nama-nama game seperti Pac-Man adalah merek dagang pemiliknya masing-masing; versi di sini adalah klon open-source buatan komunitas, bukan rilis resmi.</p>
+  <table>
+    <thead><tr><th>Game</th><th>Pembuat</th><th>Lisensi</th><th>Sumber</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</main>
+<script src="catalog.js"></script>
+<script>
+"use strict";
+document.getElementById("rows").innerHTML = window.ARCADE_GAMES.map(g =>
+  "<tr><td><strong>" + g.icon + " " + g.name + "</strong></td><td>" + g.author + "</td><td>" + g.license +
+  '</td><td><a href="https://' + g.source + '" target="_blank" rel="noopener">' + g.source.replace("github.com/", "") + "</a></td></tr>"
+).join("");
+</script>
+</body>
+</html>
