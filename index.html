@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ayomain arcade — Portal Game Open-Source</title>
+<meta name="description" content="Portal game open-source: 2048, Pac-Man, Hextris, catur, dan lainnya. Gratis, tanpa login, langsung main di browser.">
+<style>
+  :root{
+    --bg:#101418; --panel:#181e24; --panel2:#1f262e; --line:#2b343d;
+    --ink:#eef3f6; --ink-soft:#9fb0bc; --accent:#ffb020; --accent-ink:#1a1405;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;min-height:100vh}
+  a{color:inherit}
+  .topbar{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+  .topbar-in{max-width:1120px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:14px}
+  .brand{font-size:1.45rem;font-weight:900;letter-spacing:-.02em;text-decoration:none}
+  .brand .dot{color:var(--accent)}
+  .brand small{display:block;font-size:.68rem;font-weight:700;letter-spacing:.24em;color:var(--ink-soft);text-transform:uppercase}
+  .top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+    padding:9px 14px;border-radius:999px;font-weight:700;font-size:.9rem;text-decoration:none;cursor:pointer}
+  .btn:hover{border-color:var(--accent)}
+  .btn-accent{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  main{max-width:1120px;margin:0 auto;padding:22px 18px 40px}
+  .hero{padding:10px 0 4px}
+  .hero h1{font-size:clamp(1.7rem,4.5vw,2.6rem);line-height:1.08;margin:0 0 10px;letter-spacing:-.02em}
+  .hero h1 .hl{color:var(--accent)}
+  .hero p{color:var(--ink-soft);font-size:1.02rem;max-width:640px;margin:0}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 18px}
+  .search{flex:1 1 230px;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:10px 16px}
+  .search input{flex:1;background:none;border:none;outline:none;color:var(--ink);font-size:.98rem}
+  .search input::placeholder{color:var(--ink-soft)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);padding:9px 15px;border-radius:999px;font-weight:700;font-size:.88rem;cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .count{color:var(--ink-soft);font-weight:700;font-size:.9rem;margin:2px 0 12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-decoration:none;display:flex;flex-direction:column;gap:9px;transition:transform .12s ease,border-color .12s ease;animation:rise .38s ease backwards;animation-delay:calc(var(--i,0)*45ms)}
+  .card:hover{transform:translateY(-3px);border-color:var(--accent)}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  #grid.settled .card{animation:none}
+  .card h2{padding-right:42px}
+  .star{position:absolute;top:10px;right:10px;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--ink-soft);font-size:1.05rem;line-height:1;cursor:pointer}
+  .star:hover{border-color:var(--accent);color:var(--accent)}
+  .star[aria-pressed="true"]{color:var(--accent);border-color:#4a3a10;background:#2a2110}
+  .sec-title{font-size:1.05rem;margin:24px 0 10px;letter-spacing:-.01em}
+  .recent-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px}
+  .recent-item{flex:0 0 auto;display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 16px 9px 13px;text-decoration:none;font-weight:700;font-size:.92rem}
+  .recent-item:hover{border-color:var(--accent)}
+  .recent-item .ric{font-size:1.25rem;line-height:1}
+  @media (prefers-reduced-motion: reduce){
+    .card{animation:none;transition:none}
+    .card:hover{transform:none}
+  }
+  .card .icon{font-size:2.6rem;line-height:1}
+  .card h2{margin:0;font-size:1.18rem;letter-spacing:-.01em}
+  .card p{margin:0;color:var(--ink-soft);font-size:.93rem;line-height:1.45;flex:1}
+  .meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .tag{font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--panel2);color:var(--ink-soft);border:1px solid var(--line)}
+  .tag-lic{color:var(--accent);border-color:#4a3a10}
+  .play{font-weight:900;color:var(--accent);font-size:.95rem}
+  .empty{border:1px dashed var(--line);border-radius:var(--radius);padding:34px;text-align:center;color:var(--ink-soft)}
+  footer{border-top:1px solid var(--line);margin-top:38px}
+  .foot-in{max-width:1120px;margin:0 auto;padding:20px 18px;color:var(--ink-soft);font-size:.9rem;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+  .foot-in a{color:var(--accent);text-decoration:none;font-weight:700}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="./">ayomain<span class="dot">.</span><small>Arcade</small></a>
+    <div class="top-actions">
+      <a class="btn" href="credits.html">Lisensi &amp; Kredit</a>
+      <button class="btn btn-accent" id="randomBtn" type="button">🎲 Main Acak</button>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <h1>Game open-source pilihan,<br>langsung main <span class="hl">tanpa login.</span></h1>
+    <p>Portal ini merakit game-game web open-source terbaik — 2048, Pac-Man, Hextris, catur, dan lainnya — jadi satu tempat. Gratis, tanpa unduh, tanpa iklan. Model portalnya mengikuti katalog Attogram Games; setiap game tetap milik pembuatnya, lisensinya tercantum di tiap kartu.</p>
+  </section>
+  <div class="controls">
+    <label class="search">🔎 <input id="search" type="search" placeholder="Cari game…" aria-label="Cari game"></label>
+    <div class="chips" id="chips" role="group" aria-label="Filter kategori"></div>
+  </div>
+  <p class="count" id="count" aria-live="polite"></p>
+  <section id="recentSec" hidden aria-label="Terakhir dimainkan">
+    <h2 class="sec-title">Terakhir Dimainkan</h2>
+    <div class="recent-row" id="recentRow"></div>
+  </section>
+  <section class="grid" id="grid" aria-label="Daftar game"></section>
+  <div class="empty" id="empty" hidden>Tidak ada game yang cocok. Coba kata kunci atau kategori lain.</div>
+</main>
+<footer>
+  <div class="foot-in">
+    <span>ayomain arcade — dibangun dari game open-source.</span>
+    <a href="credits.html">Lihat atribusi &amp; lisensi semua game</a>
+    <span>Menambah game baru cukup satu folder + satu baris katalog.</span>
+  </div>
+</footer>
+<script src="catalog.js"></script>
+<script>
+"use strict";
+const grid = document.getElementById("grid");
+const countEl = document.getElementById("count");
+const emptyEl = document.getElementById("empty");
+const chipsEl = document.getElementById("chips");
+const searchEl = document.getElementById("search");
+const recentSec = document.getElementById("recentSec");
+const recentRow = document.getElementById("recentRow");
+/* Favorit + terakhir dimainkan disimpan lokal di browser pengunjung (tanpa pelacakan). */
+const FAV_KEY = "ayomain.favorit";
+const RECENT_KEY = "ayomain.terakhir";
+function loadList(key) {
+  try {
+    const v = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(v) ? v.filter(s => typeof s === "string") : [];
+  } catch (e) { return []; }
+}
+function saveList(key, list) {
+  try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) {}
+}
+let favs = loadList(FAV_KEY);
+function isFav(slug) { return favs.indexOf(slug) !== -1; }
+function toggleFav(slug) {
+  favs = isFav(slug) ? favs.filter(s => s !== slug) : favs.concat(slug);
+  saveList(FAV_KEY, favs);
+}
+const cats = Array.from(new Set(window.ARCADE_GAMES.map(g => g.cat)));
+const chipDefs = [{ label: "Semua", value: "Semua" }, { label: "★ Favorit", value: "Favorit" }]
+  .concat(cats.map(c => ({ label: c, value: c })));
+let activeCat = "Semua";
+chipDefs.forEach((def, i) => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.type = "button"; b.textContent = def.label;
+  b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+  b.addEventListener("click", () => {
+    activeCat = def.value;
+    chipsEl.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+    render();
+  });
+  chipsEl.appendChild(b);
+});
+function starLabel(g) {
+  return isFav(g.slug) ? "Hapus " + g.name + " dari favorit" : "Tandai " + g.name + " sebagai favorit";
+}
+function render() {
+  const q = searchEl.value.trim().toLowerCase();
+  const list = window.ARCADE_GAMES.filter(g =>
+    (activeCat === "Semua" || (activeCat === "Favorit" ? isFav(g.slug) : g.cat === activeCat)) &&
+    (!q || (g.name + " " + g.desc + " " + g.cat).toLowerCase().includes(q)));
+  grid.innerHTML = "";
+  list.forEach((g, idx) => {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = "play.html?g=" + encodeURIComponent(g.slug);
+    a.style.setProperty("--i", Math.min(idx, 10));
+    a.innerHTML =
+      '<span class="icon" aria-hidden="true">' + g.icon + "</span>" +
+      "<h2>" + g.name + "</h2>" +
+      "<p>" + g.desc + "</p>" +
+      '<span class="meta"><span class="tag">' + g.cat + '</span>' +
+      '<span class="tag tag-lic">' + g.license + "</span>" +
+      '<span class="play">Main ▶</span></span>';
+    const star = document.createElement("button");
+    star.type = "button";
+    star.className = "star";
+    star.textContent = isFav(g.slug) ? "★" : "☆";
+    star.setAttribute("aria-pressed", isFav(g.slug) ? "true" : "false");
+    star.setAttribute("aria-label", starLabel(g));
+    star.title = isFav(g.slug) ? "Hapus dari favorit" : "Tandai sebagai favorit";
+    star.addEventListener("click", ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      toggleFav(g.slug);
+      if (activeCat === "Favorit") { render(); return; }
+      star.textContent = isFav(g.slug) ? "★" : "☆";
+      star.setAttribute("aria-pressed", isFav(g.slug) ? "true" : "false");
+      star.setAttribute("aria-label", starLabel(g));
+      star.title = isFav(g.slug) ? "Hapus dari favorit" : "Tandai sebagai favorit";
+    });
+    a.appendChild(star);
+    grid.appendChild(a);
+  });
+  countEl.textContent = list.length + " dari " + window.ARCADE_GAMES.length + " game";
+  emptyEl.textContent = (activeCat === "Favorit" && favs.length === 0)
+    ? "Belum ada game favorit. Ketuk tombol ☆ di pojok kartu game untuk menandainya sebagai favorit."
+    : "Tidak ada game yang cocok. Coba kata kunci atau kategori lain.";
+  emptyEl.hidden = list.length > 0;
+}
+function renderRecent() {
+  const games = loadList(RECENT_KEY)
+    .map(s => window.ARCADE_GAMES.find(g => g.slug === s))
+    .filter(Boolean)
+    .slice(0, 6);
+  recentRow.innerHTML = "";
+  games.forEach(g => {
+    const a = document.createElement("a");
+    a.className = "recent-item";
+    a.href = "play.html?g=" + encodeURIComponent(g.slug);
+    a.innerHTML = '<span class="ric" aria-hidden="true">' + g.icon + "</span>" + g.name;
+    recentRow.appendChild(a);
+  });
+  recentSec.hidden = games.length === 0;
+}
+searchEl.addEventListener("input", render);
+document.getElementById("randomBtn").addEventListener("click", () => {
+  const g = window.ARCADE_GAMES[Math.floor(Math.random() * window.ARCADE_GAMES.length)];
+  location.href = "play.html?g=" + encodeURIComponent(g.slug);
+});
+render();
+renderRecent();
+/* Animasi masuk kartu hanya untuk tampilan pertama; render berikutnya (cari/filter) tanpa animasi. */
+setTimeout(() => grid.classList.add("settled"), 700);
+</script>
+</body>
+</html>
